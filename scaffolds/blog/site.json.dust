@@ -8,7 +8,7 @@
     "outputDir": "path:./public",
     "activeTheme": "freeze-theme-default",
     "copyrightDate": "{year}",
-    "copyright": "All rights reserved {year|s}, {name|s}",
+    "copyright": "All rights reserved {year|s}, {author|s}",
     "themes": {
         "freeze-theme-default": {
 
