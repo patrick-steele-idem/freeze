@@ -1,0 +1,18 @@
+{
+    "title": "Foobar",
+    "subtitle": "Subtitle for Foobar",
+    "description": "Description for Foobar",
+    "author": "psteeleidem",
+    "logo": "path:./logo.png",
+
+    "outputDir": "path:./public",
+    "activeTheme": "freeze-theme-default",
+    "copyrightDate": "2014",
+    "copyright": "All rights reserved 2013, John Doe",
+    "themes": {
+        "freeze-theme-default": {
+
+        }
+    },
+    "url": "http://johndoe.com/"
+}
