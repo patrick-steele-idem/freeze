@@ -18,7 +18,8 @@
     "freeze-theme-default": "^0.1.0-beta",
     "marked": "^0.3.2",
     "highlight.js": "^8.0.0",
-    "raptor-strings": "^0.2.1-beta"
+    "raptor-strings": "^0.2.1-beta",
+    "feed": "^0.2.6"
   },
   "devDependencies": {
     "mocha": "^1.18.2",

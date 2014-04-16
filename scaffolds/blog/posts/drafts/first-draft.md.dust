@@ -1,10 +1,10 @@
 ---
-author: jane
-comments: false
-categories: [second, non-tech, javascript, random, blogging]
+author: {authorId}
+comments: true
+categories: [intro,foo,bar]
 ---
 
-Title for Second Post TEST
+First Draft
 ====================
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ac nunc id mauris mattis semper. Sed non pulvinar magna, vitae pellentesque odio. Ut eget diam non nunc malesuada ornare a tempus orci. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Ut placerat tincidunt vehicula. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer ultricies et orci sit amet placerat. Vestibulum odio felis, aliquet ut hendrerit at, bibendum consectetur nisi. Morbi porta, justo vel tempus ultrices, ante nisl pulvinar nibh, eu porta mi odio eget risus.

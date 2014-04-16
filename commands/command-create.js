@@ -1,6 +1,6 @@
-var File = require('raptor/files/File'),
-    files = require('raptor/files'),
-    path = require('path');
+var nodePath = require('path');
+var fs = require('fs');
+var extend = require('raptor-util/extend');
 
 module.exports = {
     usage: 'Usage: $0 create [blog-name]',
@@ -13,31 +13,33 @@ module.exports = {
     },
 
     validate: function(args, rapido) {
-        var name = args._[0];
+        var outputDir = args._[0];
 
-        if (!name) {
-            outputDir = new File(process.cwd());
-            name = new File(process.cwd()).getName();
-        }
-        else {
-            outputDir = path.join(process.cwd(), name);
+        if (outputDir) {
+            outputDir = nodePath.resolve(process.cwd(), outputDir);
         }
 
         return {
-            name: name,
             outputDir: outputDir,
-            overwrite: args['overwrite'] === true
+            overwrite: args.overwrite === true
         };
     },
 
     run: function(args, config, rapido) {
-        var outputDir = args.outputDir,
-            overwrite = args.overwrite;
+        var outputDir = args.outputDir;
+        var overwrite = args.overwrite;
+        var scaffoldDir = config['scaffold.blog.dir'];
+
+        if (!scaffoldDir) {
+            scaffoldDir = nodePath.join(__dirname, '../scaffolds/blog');
+        }
 
         var now = new Date();
         var year = now.getFullYear();
         var month = now.getMonth() + 1;
         var day = now.getDate();
+
+
 
         function padNum(num) {
             num = '' + num;
@@ -48,85 +50,139 @@ module.exports = {
         }
 
         var today = year + '-' + padNum(month) + '-' + padNum(day);
+        var input = {
+            outputDir: outputDir || '.',
+            author: 'John Doe',
+            email: 'john.doe@johndoe.com',
+            title: 'My Blog',
+            subtitle: '',
+            description: ''
+        };
 
-        var prompt = rapido.prompt;
-        prompt.start();
-        prompt.get(
-            {
+        return rapido.prompt({
+                confirm: false,
+                values: input,
                 properties: {
-                    'author': {
-                        description: 'Author',
-                        required: false
-                    },
-                    'title': {
-                        description: 'Title',
-                        required: false
-                    },
-                    'subtitle': {
-                        description: 'Subtitle',
-                        required: false
-                    },
-                    'description': {
-                        description: 'Descriptioncat b',
-                        required: false
+                    outputDir: {
+                        message: 'Invalid output directory',
+                        type: 'string', 
+                        description: 'Output directory',
+                        required: true
                     }
-                }       
-            }
-            , 
-            function (err, result) {
-                if (err) { 
-                    rapido.log.error(err);
-                    return;
                 }
+            })
+            .then(function() {
+                outputDir = nodePath.resolve(process.cwd(), input.outputDir);
+
+                var siteJsonPath = nodePath.join(outputDir, 'site.json');
+                if (fs.existsSync(siteJsonPath)) {
+                    var siteMeta = require(siteJsonPath);
+                    extend(input, siteMeta);
+
+                    var author = siteMeta.author;
+                    if (author) {
+                        var authorMetaPath = nodePath.join(outputDir, 'authors', author + '.json');
+                        if (fs.existsSync(authorMetaPath)) {
+                            var authorMeta = require(authorMetaPath);
+                            input.author = authorMeta.name || author;
+                        }
+                    }
+                }
+
+                return rapido.prompt({
+                    confirm: true,
+                    values: input,
+                    override: {
+                        outputDir: outputDir
+                    },
+                    properties: {
+                        outputDir: {
+                            message: 'Invalid output directory',
+                            type: 'string', 
+                            description: 'Output directory',
+                            required: true
+                        },
+                        author: {
+                            message: 'Author is required',
+                            type: 'string', 
+                            description: 'Author',
+                            required: true
+                        },
+                        email: {
+                            type: 'string', 
+                            description: 'Email',
+                            required: false
+                        },
+                        title: {
+                            message: 'Title is required',
+                            type: 'string', 
+                            description: 'Title',
+                            required: true
+                        },
+                        subtitle: {
+                            message: 'Subtitle is required',
+                            type: 'string', 
+                            description: 'Subtitle',
+                            required: true
+                        },
+                        description: {
+                            message: 'Description is required',
+                            type: 'string', 
+                            description: 'Description',
+                            required: true
+                        }
+                    }
+                });
+            })
+            .then(function() {
                 
-                var author = result.author;
-                var title = result.title;
-                var subtitle = result.subtitle;
-                var description = result.description;
-                
+                var author = input.author;
+                var title = input.title;
+                var subtitle = input.subtitle;
+                var description = input.description;
+                var authorId = author.toLowerCase().replace(/[ ]/g, '-');
+                var email = input.email;
+
                 if (!title && author) {
-                    title = 'author';
+                    title = author;
                 }
 
                 rapido.scaffold(
                     {
-                        scaffoldDirProperty: "scaffold.blog.dir",
-                        outputDir: args.outputDir,
-                        overwrite: true,
+                        scaffoldDir: scaffoldDir,
+                        outputDir: outputDir,
+                        overwrite: args.overwrite === true,
                         data: {
                             author: author,
+                            authorId: authorId,
                             title: title,
                             subtitle: subtitle,
                             description: description,
-                            today: today
+                            today: today,
+                            year: year,
+                            email: email
                         },
                         afterFile: function(outputFile) {
                             
                         },
                         beforeFile: function(outputFile, content) {
-                            if (outputFile.exists()) {
-                                if (outputFile.getName() === rapido.configFilename) {
-                                    // File already exists... we need to merge
-                                    var newConfig = JSON.parse(content);
-                                    rapido.updateConfig(outputFile, newConfig);
-                                    rapido.log.success('update', outputFile.getAbsolutePath());
-                                    return false;
-                                }
-                                return overwrite;
-                            }
-
-                            return true;
+                            
                         }
                     });
 
-                rapido.log.success('finished', 'Blog written to "' + outputDir + '"');
-                rapido.log('To build your blog:');
-                rapido.log.info('blog build');
-                rapido.log('\nTo create a new post:');
-                rapido.log.info('blog create post');
+                rapido.log.success('finished', 'Blog successfully written to "' + outputDir + '"!');
+                rapido.log();
+                rapido.log('To test your blog locally:');
+                rapido.log.info('freeze start');
+                rapido.log();
+                rapido.log('To build your public blog:');
+                rapido.log.info('freeze build');
+                rapido.log();
+                rapido.log('To create a new post:');
+                rapido.log.info('freeze create post');
+                rapido.log();
+                rapido.log('To publish a draft post:');
+                rapido.log.info('freeze publish post');
             });
-
-
-        
     }
-}
+};

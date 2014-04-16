@@ -1,7 +1,12 @@
 {
     "name": "freeze",
     "description": "Commands for managing a Freeze-powered blog",
+
     "commands": {
+        "create": {
+            "description": "Create a new blog",
+            "file": "commands/command-create.js"
+        },
         "start": {
             "description": "Start the server and watch files for changes",
             "file": "commands/command-start.js"
