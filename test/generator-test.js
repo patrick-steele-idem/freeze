@@ -10,7 +10,7 @@ var raptorAsync = require('raptor-async');
 
 var sites = {};
 
-describe('freeze/generator' , function() {
+xdescribe('freeze/generator' , function() {
 
     before(function(done) {
         var loader = require('../lib/loader');
