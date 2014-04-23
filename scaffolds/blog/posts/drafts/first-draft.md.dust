@@ -1,5 +1,5 @@
 ---
-author: {authorId}
+author: {authorId|s}
 comments: true
 categories: [intro,foo,bar]
 ---

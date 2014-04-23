@@ -19,7 +19,11 @@
     "marked": "^0.3.2",
     "highlight.js": "^8.0.0",
     "raptor-strings": "^0.2.1-beta",
-    "feed": "^0.2.6"
+    "feed": "^0.2.6",
+    "raptor-args": "^0.1.13-beta",
+    "terminal-menu": "^0.3.2",
+    "colors": "^0.6.2",
+    "jsonminify": "^0.2.3"
   },
   "devDependencies": {
     "mocha": "^1.18.2",

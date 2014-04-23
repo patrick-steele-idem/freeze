@@ -85,6 +85,7 @@ module.exports = {
                         if (fs.existsSync(authorMetaPath)) {
                             var authorMeta = require(authorMetaPath);
                             input.author = authorMeta.name || author;
+                            input.email = authorMeta.email || input.email;
                         }
                     }
                 }

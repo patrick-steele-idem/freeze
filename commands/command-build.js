@@ -1,22 +1,21 @@
-var cwd = process.cwd();
 var freeze = require('../');
 
 module.exports = {
     usage: 'Usage: $0 build',
 
     options: {
-        'unpublished': {
+        'public': {
+            description: 'Generate the public version of the website (include drafts)',
             type: 'boolean',
-            describe: 'Include unpublished posts'
+            default: true
         }
     },
 
     validate: function(args, rapido) {
-        var dir = args._[0] || cwd;
-
+        var dir = args._[0] || process.cwd();
 
         return {
-            includeUnpublished: args.unpublished === true,
+            isPublic: args.public === true,
             dir: dir
         };
     },
@@ -27,16 +26,17 @@ module.exports = {
         console.log('Generating site...');
 
         var options = {
-            includeUnpublished: args.includeUnpublished === true
+            isPublic: args.isPublic === true
         };
 
-        freeze.generate(args.dir, options, function(err) {
+        freeze.generate(args.dir, options, function(err, result) {
             if (err) {
-                console.log('Failed to generate site. Error: ' + (err.stack || err));
+                console.log('Failed to generate site. Error: ' + (err.stack || err) + new Error().stack);
                 process.exit(1);
-            } else {
-                console.log('Site generated in ' + (Date.now() - startTime) + 'ms');
             }
+
+            var outputDir = result.outputDir;
+            console.log('Site generated to "' + outputDir + '" in ' + (Date.now() - startTime) + 'ms');
         });
     }
 };
