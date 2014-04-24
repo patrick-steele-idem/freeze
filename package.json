@@ -23,7 +23,8 @@
     "raptor-args": "^0.1.13-beta",
     "terminal-menu": "^0.3.2",
     "colors": "^0.6.2",
-    "jsonminify": "^0.2.3"
+    "jsonminify": "^0.2.3",
+    "moment": "^2.6.0"
   },
   "devDependencies": {
     "mocha": "^1.18.2",
